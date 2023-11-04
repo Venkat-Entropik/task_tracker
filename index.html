@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="light-theme">
+    <div id="App">
+        <h3 class="title">Task Tracker <span class="icon"><i class="fa-solid fa-list-check"></i></span></h3>
+        
+        <div class="buttonsContainer">
+          <div class="toggleContainer">
+            <h3>THEME</h3>
+            <label class="toggle-container">
+                <input type="checkbox" class="toggle-input">
+                <span class="toggle-track">
+                    <span class="toggle-thumb"></span>
+                </span>
+            </label>
+          </div>
+          <div class="buttonContainer">
+            <button id="createBtn">
+            <i class="fa-solid fa-circle-plus"></i> Add new task
+            </button>
+          </div>
+        </div>
+
+        <div class="categories">
+            <div class="container">
+                <div class="categoryContainer">
+                    <P class="categoryTitle">All</P>
+                </div>
+                <div id="All"></div>
+            </div>
+            
+            <div class="container">
+                <div class="categoryContainer">
+            
+                    <P class="categoryTitle">Working</P>
+                    
+                </div>
+                <div id="Working">
+    
+                </div>
+            </div>
+            
+            <div class="container">
+                <div class="categoryContainer">
+                
+                    <P class="categoryTitle">Pending</P>
+                    
+                
+                </div>
+                <div id="Pending">
+    
+                </div>
+            </div>
+
+          
+            <div class="container">
+                <div class="categoryContainer">
+                    <P class="categoryTitle">Completed</P>
+                   
+                </div>
+                <div id="Completed">
+    
+                </div>
+            </div>
+        </div>
+        <div id="popupContainer">
+            <i class="fa-solid fa-xmark"></i>
+            <h3 class="popupTitle">Create Task</h3>
+            <label for="textArea">Enter Description</label>
+            <br/>
+            <textarea id="textArea" cols="30" rows="5" placeholder="Enter Description"></textarea>
+            <label>Select Category</label>
+            <br/>
+            <select id="dropDown">
+                <option value="">Select Category</option>
+                <option value="All">
+                    All
+                </option>
+                <option value="Working">
+                    working
+                </option>
+                <option value="Pending">
+                    Pending
+                </option>
+                <option value="Completed">
+                    Completed
+                </option>
+            </select>
+            <button id="submitBtn">Submit</button>
+        </div>
+      </div>
+</body>
+<script src="script.js"></script>
+</html>
