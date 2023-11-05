@@ -138,7 +138,7 @@ function createTaskBox(task) {
   return box;
 }
 
-function displayTaskBox(box, status) {
+function displayTaskBox(box, status) { // based on status appending the box to containers
   switch (status) {
     case 'all':
       all.appendChild(box);
@@ -163,21 +163,24 @@ function createButton(text, className) {
   button.innerHTML = `<i class="fa-solid fa-pen"></i> ${text}`;
   return button;
 }
+//Remove task function
 
 function removeTask(task) {
-  const index = existingTasks.findIndex((t) => t.id === task.id);
+  const index = existingTasks.findIndex((t) => t.id === task.id); //getting index of the task
   if (index !== -1) {
-    existingTasks.splice(index, 1);
-    localStorage.setItem('tasks', JSON.stringify(existingTasks));
+    existingTasks.splice(index, 1); // removing the task based on index
+    localStorage.setItem('tasks', JSON.stringify(existingTasks)); // storing the data to local storage
     window.location.reload()
   }
 }
 
-function updateTaskStatus(draggable) {
-  const taskId = draggable.dataset.id;
+//updating the status and updating time when drag and drop
+
+function updateTaskStatus(draggable) { 
+  const taskId = draggable.dataset.id; //getting id of the task 
   const parent = draggable.parentElement;
-  const containerId = parent.children[1].id;
-  const index = existingTasks.findIndex(task => task.id === taskId);
+  const containerId = parent.children[1].id; //getting id name from parent contaiiner like all,working,pending and completed
+  const index = existingTasks.findIndex(task => task.id === taskId); 
 
   if (index !== -1) {
     existingTasks[index].status = containerId;
@@ -187,22 +190,27 @@ function updateTaskStatus(draggable) {
   }
 }
 
+//pop up container
+
 function popUpOpen() {
-  popup.style.display = 'block';
-  textArea.value = '';
-  dropDown.value = 'all';
-  if (taskToEdit) {
-    textArea.value = taskToEdit.description;
-    dropDown.value = taskToEdit.status;
+  popup.style.display = 'block'; // displaying the popup container
+  textArea.value = ''; // intially it will show the empty textarea
+  dropDown.value = 'all'; // by default it will show status as all
+
+  if (taskToEdit) {  // when user want to edit the task 
+    textArea.value = taskToEdit.description; // it will show the task description 
+    dropDown.value = taskToEdit.status; //task status
   }
+
 }
 
 function popUpClose() {
-  popup.style.display = 'none';
+  popup.style.display = 'none'; //hiding the popup container
 }
 
+// submit task function
 function submitTask() {
-  if (taskToEdit) {
+  if (taskToEdit) { // while user edit the task it will go to the if condition
     const index = existingTasks.findIndex((t) => t.id === taskToEdit.id);
     if (index !== -1) {
       const updatedTask = {
@@ -215,7 +223,7 @@ function submitTask() {
       localStorage.setItem('tasks', JSON.stringify(existingTasks));
       taskToEdit = null;
     }
-  } else {
+  } else { //when user creating new task
     const newTask = {
       ...task,
       creatingTime: new Date().toString().slice(4, 24),
@@ -225,6 +233,8 @@ function submitTask() {
     localStorage.setItem('tasks', JSON.stringify(existingTasks));
   }
 
+
+  //after submiting the task reseting the task
   textArea.value = '';
   dropDown.value = 'all';
   task = {
@@ -235,11 +245,11 @@ function submitTask() {
     updatingTime: '',
   };
 
-  popup.style.display = 'none';
+  popup.style.display = 'none'; //at the end hiding the popup container
   window.location.reload();
 }
 
-
+// Drag and drop 
 function dragAndDrop(){
   const elements = document.querySelectorAll('.draggable');
   elements.forEach(draggable => {
@@ -248,7 +258,7 @@ function dragAndDrop(){
     });
     draggable.addEventListener("dragend", () => {
       draggable.classList.remove("dragging");
-      updateTaskStatus(draggable);
+      updateTaskStatus(draggable); //after droping the task updating the status and the time
     });
   });
 
