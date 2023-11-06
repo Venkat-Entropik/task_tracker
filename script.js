@@ -9,38 +9,43 @@ const pending = document.getElementById('Pending');
 const completed = document.getElementById('Completed');
 const toggleBtn = document.querySelector('.toggle-input');
 const body = document.body;
-const containers = document.querySelectorAll(".container");
+const containers = document.querySelectorAll('.container');
 const cancelBtn = document.querySelector('.fa-xmark');
-
-//Getting data from local storage if nothing is resent it will return empty array []
+const filterInput = document.getElementById('filterTask');
+// Getting data from local storage if nothing is present it will return an empty array []
 
 const existingTasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
-//Declared the task object with empty values
-
+// Declared the task object with empty values
 let task = {
   id: '',
   description: '',
   status: 'all',
   creatingTime: '',
-  updatingTime: ''
+  updatingTime: '',
 };
 
-//Declared the task edit to null
-
+// Declared the task edit to null
 let taskToEdit = null;
+
+// Declaring filter value
+let filterValue = '';
+
+// Declaring debounce timer
+let debounceTimeout;
 
 init();
 
 function init() {
 
-  loadDarkMode()
-  
+  loadDarkMode(); //theme function 
+
   createBtn.addEventListener('click', popUpOpen);
   submitBtn.addEventListener('click', submitTask);
   cancelBtn.addEventListener('click', popUpClose);
   textArea.addEventListener('keyup', textAreaData);
-  dropDown.addEventListener('change',dropDownData);
+  dropDown.addEventListener('change', dropDownData);
+  filterInput.addEventListener('keyup', filterInputFunc);
 
   const dataFromStorage = JSON.parse(localStorage.getItem('tasks'));
   dataFromStorage.forEach((task) => {
@@ -49,25 +54,82 @@ function init() {
   });
 
   dragAndDrop()
-
+  
 }
+
+
 
 // Getting input from textarea
-function textAreaData(e){
- task={...task,description:e.target.value}
+function textAreaData(e) {
+  task = { ...task, description: e.target.value };
 }
 
-//updating status
-function dropDownData(e){
-  task={...task,status:e.target.value}
+// Updating status
+function dropDownData(e) {
+  task = { ...task, status: e.target.value };
 }
 
 
-function loadDarkMode(){
-  let toggle = localStorage.getItem('darkMode') === 'true'; //if dark mode value is true in local storage then adding class name
+// clearing functions
+
+function clearContainers() {
+  all.innerHTML = '';
+  working.innerHTML = '';
+  pending.innerHTML = '';
+  completed.innerHTML = '';
+}
+
+
+
+// Update UI
+function updateUI() {
+  clearContainers();
+
+  existingTasks.forEach((task) => {
+   
+    const existingTaskElement = document.querySelector(`[data-id="${task.id}"]`);
+
+    if (existingTaskElement) {
+    
+      displayTaskBox(existingTaskElement, task.status.toLowerCase());
+    } else {
+      const box = createTaskBox(task);
+      displayTaskBox(box, task.status.toLowerCase());
+    }
+  
+  });
+  dragAndDrop();
+}
+
+
+// Filter input
+function filterInputFunc() {
+  filterValue = filterInput.value.toLowerCase(); // Getting value from input
+
+  if (filterValue.length >= 3) { //checking input value greater than or equal to 3
+    clearTimeout(debounceTimeout); // Clearing timer
+
+    debounceTimeout = setTimeout(function () { 
+      existingTasks.forEach((task)=>{ // looping over all tasks
+        if(task.description.toLowerCase().includes(filterValue)){ // checking input value matches the task description
+          const existingTaskElement = document.querySelector(`[data-id="${task.id}"]`); //getting element from the dom elements
+          existingTaskElement.classList.remove('hide') //if the value matches it will show
+        }else{
+          const existingTaskElement = document.querySelector(`[data-id="${task.id}"]`);
+          existingTaskElement.classList.add('hide')   // if the value doesn' matches it will hide
+        }
+      });
+    }, 500);
+  }
+}
+
+//theme changer function
+
+function loadDarkMode() {
+  let toggle = localStorage.getItem('darkMode') === 'true'; // If dark mode value is true in local storage then adding class name
   if (toggle) {
-    body.classList.add('dark-theme'); 
-    toggleBtn.checked = true; //input checkbox set to true
+    body.classList.add('dark-theme');
+    toggleBtn.checked = true; // Input checkbox set to true
   }
 
   toggleBtn.addEventListener('change', () => {
@@ -81,15 +143,15 @@ function loadDarkMode(){
   });
 }
 
-//Creating Box and appending to the containers
-
+// Creating Box and appending to the containers
 function createTaskBox(task) {
+  
+
   const box = document.createElement('div');
   box.classList.add('draggable');
   box.classList.add('box');
   box.setAttribute('draggable', true);
   box.dataset.id = task.id;
-
   const title = document.createElement('h6');
   title.setAttribute('class', 'boxTitle');
 
@@ -134,11 +196,10 @@ function createTaskBox(task) {
   box.appendChild(currentTime);
   box.appendChild(updatedTime);
   box.appendChild(boxButtons);
-
   return box;
 }
 
-function displayTaskBox(box, status) { // based on status appending the box to containers
+function displayTaskBox(box, status) {
   switch (status) {
     case 'all':
       all.appendChild(box);
@@ -160,57 +221,62 @@ function displayTaskBox(box, status) { // based on status appending the box to c
 function createButton(text, className) {
   const button = document.createElement('button');
   button.setAttribute('class', className);
-  button.innerHTML = `<i class="fa-solid fa-pen"></i> ${text}`;
+  console.log(className);
+  const icon = className === "btnEdit" ? '<i class="fa-solid fa-pen"></i>' : '<i class="fa-solid fa-trash"></i>';
+  button.innerHTML = `${icon} ${text}`
   return button;
 }
-//Remove task function
 
+// Remove task function
 function removeTask(task) {
-  const index = existingTasks.findIndex((t) => t.id === task.id); //getting index of the task
+  const index = existingTasks.findIndex((t) => t.id === task.id);
   if (index !== -1) {
-    existingTasks.splice(index, 1); // removing the task based on index
-    localStorage.setItem('tasks', JSON.stringify(existingTasks)); // storing the data to local storage
-    window.location.reload()
+    existingTasks.splice(index, 1);
+    localStorage.setItem('tasks', JSON.stringify(existingTasks));
+    updateUI();
   }
 }
 
-//updating the status and updating time when drag and drop
-
-function updateTaskStatus(draggable) { 
-  const taskId = draggable.dataset.id; //getting id of the task 
+// Updating the status and updating time when drag and drop
+function updateTaskStatus(draggable) {
+  const taskId = draggable.dataset.id;
   const parent = draggable.parentElement;
-  const containerId = parent.children[1].id; //getting id name from parent contaiiner like all,working,pending and completed
-  const index = existingTasks.findIndex(task => task.id === taskId); 
+  const containerId = parent.children[1].id;
 
+ 
+  const index = existingTasks.findIndex((task) => task.id === taskId);
+  
+  
+  
   if (index !== -1) {
     existingTasks[index].status = containerId;
     existingTasks[index].updatedTime = new Date().toString().slice(4, 24);
     localStorage.setItem('tasks', JSON.stringify(existingTasks));
-    window.location.reload();
+    updateUI();
+   
   }
+  
 }
 
-//pop up container
-
+// Pop up container
 function popUpOpen() {
-  popup.style.display = 'block'; // displaying the popup container
-  textArea.value = ''; // intially it will show the empty textarea
-  dropDown.value = 'all'; // by default it will show status as all
+  popup.style.display = 'block';
+  textArea.value = '';
+  dropDown.value = 'all';
 
-  if (taskToEdit) {  // when user want to edit the task 
-    textArea.value = taskToEdit.description; // it will show the task description 
-    dropDown.value = taskToEdit.status; //task status
+  if (taskToEdit) {
+    textArea.value = taskToEdit.description;
+    dropDown.value = taskToEdit.status;
   }
-
 }
 
 function popUpClose() {
-  popup.style.display = 'none'; //hiding the popup container
+  popup.style.display = 'none';
 }
 
-// submit task function
+// Submit task function
 function submitTask() {
-  if (taskToEdit) { // while user edit the task it will go to the if condition
+  if (taskToEdit) {
     const index = existingTasks.findIndex((t) => t.id === taskToEdit.id);
     if (index !== -1) {
       const updatedTask = {
@@ -223,18 +289,17 @@ function submitTask() {
       localStorage.setItem('tasks', JSON.stringify(existingTasks));
       taskToEdit = null;
     }
-  } else { //when user creating new task
+  } else {
     const newTask = {
       ...task,
       creatingTime: new Date().toString().slice(4, 24),
       id: new Date().getTime().toString(),
+      updatedTime: 'Not Updated',
     };
     existingTasks.push(newTask);
     localStorage.setItem('tasks', JSON.stringify(existingTasks));
   }
 
-
-  //after submiting the task reseting the task
   textArea.value = '';
   dropDown.value = 'all';
   task = {
@@ -244,28 +309,38 @@ function submitTask() {
     creatingTime: '',
     updatingTime: '',
   };
-
-  popup.style.display = 'none'; //at the end hiding the popup container
-  window.location.reload();
+  
+  popup.style.display = 'none';
+  updateUI();
 }
 
-// Drag and drop 
-function dragAndDrop(){
+// Drag and drop
+function dragAndDrop() {
   const elements = document.querySelectorAll('.draggable');
-  elements.forEach(draggable => {
-    draggable.addEventListener("dragstart", () => {
-      draggable.classList.add("dragging");
+  elements.forEach((draggable) => {
+    draggable.addEventListener('dragstart', () => {
+      draggable.classList.add('dragging');
     });
-    draggable.addEventListener("dragend", () => {
-      draggable.classList.remove("dragging");
-      updateTaskStatus(draggable); //after droping the task updating the status and the time
+    draggable.addEventListener('dragend', () => {
+      draggable.classList.remove('dragging');
+      updateTaskStatus(draggable);
+      
     });
   });
 
-  containers.forEach(container => {
-    container.addEventListener("dragover", () => {
-      const draggedElement = document.querySelector(".dragging");
-      container.append(draggedElement);
+  containers.forEach((container) => {
+    
+    container.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const draggedElement = document.querySelector('.dragging');
+      container.appendChild(draggedElement);
+     
     });
   });
 }
+
+
+
+ 
+
+
