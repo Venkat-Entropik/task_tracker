@@ -47,10 +47,10 @@ function init() {
   dropDown.addEventListener('change', dropDownData);
   filterInput.addEventListener('keyup', filterInputFunc);
 
-  const dataFromStorage = JSON.parse(localStorage.getItem('tasks'));
+  const dataFromStorage = JSON.parse(localStorage.getItem('tasks')); // getting tasks from local storage
   dataFromStorage.forEach((task) => {
-    const box = createTaskBox(task);
-    displayTaskBox(box, task.status.toLowerCase());
+    const box = createTaskBox(task); // creating box to each task
+    displayTaskBox(box, task.status.toLowerCase()); // appending tasks based on their status
   });
 
   dragAndDrop()
@@ -85,22 +85,30 @@ function clearContainers() {
 function updateUI() {
   clearContainers();
 
-  existingTasks.forEach((task) => {
+  existingTasks.forEach((task) => { //looping all the tasks from local storage
    
-    const existingTaskElement = document.querySelector(`[data-id="${task.id}"]`);
+    const existingTaskElement = document.querySelector(`[data-id="${task.id}"]`); //getting the element using attribute selector
 
-    if (existingTaskElement) {
+    if (existingTaskElement) { //if the elements is already present in DOM
     
-      displayTaskBox(existingTaskElement, task.status.toLowerCase());
-    } else {
+      displayTaskBox(existingTaskElement, task.status.toLowerCase()); // appending that to their containers
+    } else { //If not exist creating new box and appending to container
       const box = createTaskBox(task);
       displayTaskBox(box, task.status.toLowerCase());
     }
   
   });
+  
   dragAndDrop();
 }
 
+//if the characters are less than 3 then it will unhide the tasks
+function removeHideClass(){
+  existingTasks.forEach((task)=>{
+     const existingTaskElement = document.querySelector(`[data-id="${task.id}"]`); //getting element from the dom elements
+      existingTaskElement.classList.remove('hide')
+  })
+}
 
 // Filter input
 function filterInputFunc() {
@@ -120,10 +128,12 @@ function filterInputFunc() {
         }
       });
     }, 500);
+  }else{
+    removeHideClass()
   }
 }
 
-//theme changer function
+//theame changer function
 
 function loadDarkMode() {
   let toggle = localStorage.getItem('darkMode') === 'true'; // If dark mode value is true in local storage then adding class name
@@ -145,8 +155,6 @@ function loadDarkMode() {
 
 // Creating Box and appending to the containers
 function createTaskBox(task) {
-  
-
   const box = document.createElement('div');
   box.classList.add('draggable');
   box.classList.add('box');
@@ -198,7 +206,7 @@ function createTaskBox(task) {
   box.appendChild(boxButtons);
   return box;
 }
-
+// Appending the tasks based on their status
 function displayTaskBox(box, status) {
   switch (status) {
     case 'all':
@@ -218,10 +226,11 @@ function displayTaskBox(box, status) {
   }
 }
 
+// Create button function
+
 function createButton(text, className) {
   const button = document.createElement('button');
   button.setAttribute('class', className);
-  console.log(className);
   const icon = className === "btnEdit" ? '<i class="fa-solid fa-pen"></i>' : '<i class="fa-solid fa-trash"></i>';
   button.innerHTML = `${icon} ${text}`
   return button;
@@ -243,11 +252,8 @@ function updateTaskStatus(draggable) {
   const parent = draggable.parentElement;
   const containerId = parent.children[1].id;
 
- 
   const index = existingTasks.findIndex((task) => task.id === taskId);
-  
-  
-  
+
   if (index !== -1) {
     existingTasks[index].status = containerId;
     existingTasks[index].updatedTime = new Date().toString().slice(4, 24);
@@ -255,10 +261,15 @@ function updateTaskStatus(draggable) {
     updateUI();
    
   }
+  updateUI();
   
 }
 
-// Pop up container
+
+
+
+
+// Pop up container 
 function popUpOpen() {
   popup.style.display = 'block';
   textArea.value = '';
@@ -270,13 +281,15 @@ function popUpOpen() {
   }
 }
 
+// popup close 
+
 function popUpClose() {
   popup.style.display = 'none';
 }
 
 // Submit task function
 function submitTask() {
-  if (taskToEdit) {
+  if (taskToEdit) { 
     const index = existingTasks.findIndex((t) => t.id === taskToEdit.id);
     if (index !== -1) {
       const updatedTask = {
@@ -316,7 +329,7 @@ function submitTask() {
 
 // Drag and drop
 function dragAndDrop() {
-  const elements = document.querySelectorAll('.draggable');
+  const elements = document.querySelectorAll('.draggable'); // getting all tasks using dragable class
   elements.forEach((draggable) => {
     draggable.addEventListener('dragstart', () => {
       draggable.classList.add('dragging');
@@ -324,7 +337,6 @@ function dragAndDrop() {
     draggable.addEventListener('dragend', () => {
       draggable.classList.remove('dragging');
       updateTaskStatus(draggable);
-      
     });
   });
 
@@ -334,13 +346,7 @@ function dragAndDrop() {
       e.preventDefault();
       const draggedElement = document.querySelector('.dragging');
       container.appendChild(draggedElement);
-     
+      
     });
   });
 }
-
-
-
- 
-
-
