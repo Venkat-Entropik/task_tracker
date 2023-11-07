@@ -342,6 +342,10 @@ font-size: 1.3rem;
 cursor: pointer;
 font-weight: bold;
 }
+
+.draggable{
+  cursor: grab;
+}
 @media only screen and (max-width: 600px) {
  #filterTask{
   top: 40px;

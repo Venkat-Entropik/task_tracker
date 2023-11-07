@@ -57,6 +57,14 @@ function init() {
   
 }
 
+//Date and Time
+
+function dateAndTime(){
+  let date = new Date().toLocaleDateString()
+  let time = new Date().toLocaleTimeString()
+  return `${date} ${time}`
+}
+
 
 
 // Getting input from textarea
@@ -180,7 +188,7 @@ function createTaskBox(task) {
     taskToEdit = task;
     textArea.value = taskToEdit.description;
     dropDown.value = taskToEdit.status;
-    updatedTime.value = new Date().toString().slice(4, 24);
+    updatedTime.value = dateAndTime();
     popup.style.display = 'block';
   });
 
@@ -210,6 +218,9 @@ function createTaskBox(task) {
 // Appending the tasks based on their status
 function displayTaskBox(box, status) {
   switch (status) {
+    case '':
+      all.appendChild(box);
+      break;
     case 'all':
       all.appendChild(box);
       break;
@@ -257,7 +268,7 @@ function updateTaskStatus(draggable) {
 
   if (index !== -1) {
     existingTasks[index].status = containerId;
-    existingTasks[index].updatedTime = new Date().toString().slice(4, 24);
+    existingTasks[index].updatedTime = dateAndTime();
     localStorage.setItem('tasks', JSON.stringify(existingTasks));
     updateUI();
    
@@ -265,9 +276,6 @@ function updateTaskStatus(draggable) {
   updateUI();
   
 }
-
-
-
 
 
 // Pop up container 
@@ -297,7 +305,7 @@ function submitTask() {
         ...taskToEdit,
         description: textArea.value,
         status: dropDown.value,
-        updatedTime: new Date().toString().slice(4, 24),
+        updatedTime: dateAndTime(),
       };
       existingTasks[index] = updatedTask;
       localStorage.setItem('tasks', JSON.stringify(existingTasks));
@@ -306,7 +314,7 @@ function submitTask() {
   } else {
     const newTask = {
       ...task,
-      creatingTime: new Date().toString().slice(4, 24),
+      creatingTime: dateAndTime(),
       id: new Date().getTime().toString(),
       updatedTime: 'Not Updated',
     };
