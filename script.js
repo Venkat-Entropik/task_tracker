@@ -70,7 +70,7 @@ function dropDownData(e) {
 }
 
 
-// clearing functions
+// Clearing containers
 
 function clearContainers() {
   all.innerHTML = '';
@@ -206,6 +206,7 @@ function createTaskBox(task) {
   box.appendChild(boxButtons);
   return box;
 }
+
 // Appending the tasks based on their status
 function displayTaskBox(box, status) {
   switch (status) {
