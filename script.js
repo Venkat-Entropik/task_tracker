@@ -3,16 +3,14 @@ import { loadDarkMode } from "./utils/theme.js";
 import { popUpClose } from "./utils/popUpClose.js";
 import { filterInputFunc } from "./utils/filter.js";
 import { createButton } from "./utils/createButton.js";
+import { clearContainers } from "./utils/clearContainers.js";
+import { displayTaskBox } from "./utils/displayTaskBox.js";
 
 const popup = document.getElementById('popupContainer');
 const createBtn = document.getElementById('createBtn');
 const submitBtn = document.getElementById('submitBtn');
 const textArea = document.getElementById('textArea');
 const dropDown = document.getElementById('dropDown');
-const all = document.getElementById('All');
-const working = document.getElementById('Working');
-const pending = document.getElementById('Pending');
-const completed = document.getElementById('Completed');
 const containers = document.querySelectorAll('.container');
 const cancelBtn = document.querySelector('.fa-xmark');
 const filterInput = document.getElementById('filterTask');
@@ -60,9 +58,6 @@ function init() {
 }
 
 
-
-
-
 // Getting input from textarea
 function textAreaData(e) {
   task = { ...task, description: e.target.value };
@@ -72,18 +67,6 @@ function textAreaData(e) {
 function dropDownData(e) {
   task = { ...task, status: e.target.value };
 }
-
-
-// Clearing containers
-
-function clearContainers() {
-  all.innerHTML = '';
-  working.innerHTML = '';
-  pending.innerHTML = '';
-  completed.innerHTML = '';
-}
-
-
 
 // Update UI
 function updateUI() {
@@ -105,8 +88,6 @@ function updateUI() {
   
   dragAndDrop();
 }
-
-
 
 // Creating Box and appending to the containers
 function createTaskBox(task) {
@@ -161,30 +142,6 @@ function createTaskBox(task) {
   box.appendChild(boxButtons);
   return box;
 }
-
-// Appending the tasks based on their status
-function displayTaskBox(box, status) {
-  switch (status) {
-    case '':
-      all.appendChild(box);
-      break;
-    case 'all':
-      all.appendChild(box);
-      break;
-    case 'working':
-      working.appendChild(box);
-      break;
-    case 'pending':
-      pending.appendChild(box);
-      break;
-    case 'completed':
-      completed.appendChild(box);
-      break;
-    default:
-      break;
-  }
-}
-
 
 
 // Remove task function
