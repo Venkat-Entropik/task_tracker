@@ -1,3 +1,9 @@
+import { dateAndTime } from "./utils/dateAndTime.js";
+import { loadDarkMode } from "./utils/theme.js";
+import { popUpClose } from "./utils/popUpClose.js";
+import { filterInputFunc } from "./utils/filter.js";
+import { createButton } from "./utils/createButton.js";
+
 const popup = document.getElementById('popupContainer');
 const createBtn = document.getElementById('createBtn');
 const submitBtn = document.getElementById('submitBtn');
@@ -7,12 +13,12 @@ const all = document.getElementById('All');
 const working = document.getElementById('Working');
 const pending = document.getElementById('Pending');
 const completed = document.getElementById('Completed');
-const toggleBtn = document.querySelector('.toggle-input');
-const body = document.body;
 const containers = document.querySelectorAll('.container');
 const cancelBtn = document.querySelector('.fa-xmark');
 const filterInput = document.getElementById('filterTask');
 // Getting data from local storage if nothing is present it will return an empty array []
+
+
 
 const existingTasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
@@ -28,11 +34,7 @@ let task = {
 // Declared the task edit to null
 let taskToEdit = null;
 
-// Declaring filter value
-let filterValue = '';
 
-// Declaring debounce timer
-let debounceTimeout;
 
 init();
 
@@ -45,7 +47,7 @@ function init() {
   cancelBtn.addEventListener('click', popUpClose);
   textArea.addEventListener('keyup', textAreaData);
   dropDown.addEventListener('change', dropDownData);
-  filterInput.addEventListener('keyup', filterInputFunc);
+  filterInput.addEventListener('keyup',(e)=>{filterInputFunc(e)} );
 
   const dataFromStorage = JSON.parse(localStorage.getItem('tasks')); // getting tasks from local storage
   dataFromStorage.forEach((task) => {
@@ -57,13 +59,7 @@ function init() {
   
 }
 
-//Date and Time
 
-function dateAndTime(){
-  let date = new Date().toLocaleDateString()
-  let time = new Date().toLocaleTimeString()
-  return `${date} ${time}`
-}
 
 
 
@@ -110,56 +106,7 @@ function updateUI() {
   dragAndDrop();
 }
 
-//if the characters are less than 3 then it will unhide the tasks
-function removeHideClass(){
-  existingTasks.forEach((task)=>{
-     const existingTaskElement = document.querySelector(`[data-id="${task.id}"]`); //getting element from the dom elements
-      existingTaskElement.classList.remove('hide')
-  })
-}
 
-// Filter input
-function filterInputFunc() {
-  filterValue = filterInput.value.toLowerCase(); // Getting value from input
-
-  if (filterValue.length >= 3) { //checking input value greater than or equal to 3
-    clearTimeout(debounceTimeout); // Clearing timer
-
-    debounceTimeout = setTimeout(function () { 
-      existingTasks.forEach((task)=>{ // looping over all tasks
-        if(task.description.toLowerCase().includes(filterValue)){ // checking input value matches the task description
-          const existingTaskElement = document.querySelector(`[data-id="${task.id}"]`); //getting element from the dom elements
-          existingTaskElement.classList.remove('hide') //if the value matches it will show
-        }else{
-          const existingTaskElement = document.querySelector(`[data-id="${task.id}"]`);
-          existingTaskElement.classList.add('hide')   // if the value doesn' matches it will hide
-        }
-      });
-    }, 500);
-  }else{
-    removeHideClass()
-  }
-}
-
-//theame changer function
-
-function loadDarkMode() {
-  let toggle = localStorage.getItem('darkMode') === 'true'; // If dark mode value is true in local storage then adding class name
-  if (toggle) {
-    body.classList.add('dark-theme');
-    toggleBtn.checked = true; // Input checkbox set to true
-  }
-
-  toggleBtn.addEventListener('change', () => {
-    if (toggleBtn.checked) {
-      localStorage.setItem('darkMode', 'true');
-      body.classList.add('dark-theme');
-    } else {
-      body.classList.remove('dark-theme');
-      localStorage.setItem('darkMode', 'false');
-    }
-  });
-}
 
 // Creating Box and appending to the containers
 function createTaskBox(task) {
@@ -238,15 +185,7 @@ function displayTaskBox(box, status) {
   }
 }
 
-// Create button function
 
-function createButton(text, className) {
-  const button = document.createElement('button');
-  button.setAttribute('class', className);
-  const icon = className === "btnEdit" ? '<i class="fa-solid fa-pen"></i>' : '<i class="fa-solid fa-trash"></i>';
-  button.innerHTML = `${icon} ${text}`
-  return button;
-}
 
 // Remove task function
 function removeTask(task) {
@@ -290,11 +229,7 @@ function popUpOpen() {
   }
 }
 
-// popup close 
 
-function popUpClose() {
-  popup.style.display = 'none';
-}
 
 // Submit task function
 function submitTask() {
