@@ -4,6 +4,8 @@ import { popUpClose } from "./utils/popUpClose.js";
 import { filterInputFunc } from "./utils/filter.js";
 import { createButton } from "./utils/createButton.js";
 
+const toggleBtn = document.querySelector('.toggle-input');
+const body = document.body;
 const popup = document.getElementById('popupContainer');
 const createBtn = document.getElementById('createBtn');
 const submitBtn = document.getElementById('submitBtn');
@@ -16,8 +18,6 @@ const completed = document.getElementById('Completed');
 const containers = document.querySelectorAll('.container');
 const cancelBtn = document.querySelector('.fa-xmark');
 const filterInput = document.getElementById('filterTask');
-// Getting data from local storage if nothing is present it will return an empty array []
-
 
 
 const existingTasks = JSON.parse(localStorage.getItem('tasks')) || [];
@@ -31,7 +31,7 @@ let task = {
   updatingTime: '',
 };
 
-// Declared the task edit to null
+
 let taskToEdit = null;
 
 
@@ -40,11 +40,11 @@ init();
 
 function init() {
 
-  loadDarkMode(); //theme function 
+  loadDarkMode(body,toggleBtn); //theme function 
 
   createBtn.addEventListener('click', popUpOpen);
   submitBtn.addEventListener('click', submitTask);
-  cancelBtn.addEventListener('click', popUpClose);
+  cancelBtn.addEventListener('click', ()=>{popUpClose(popup)});
   textArea.addEventListener('keyup', textAreaData);
   dropDown.addEventListener('change', dropDownData);
   filterInput.addEventListener('keyup',(e)=>{filterInputFunc(e)} );

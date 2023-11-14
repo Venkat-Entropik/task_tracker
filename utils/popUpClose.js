@@ -1,5 +1,7 @@
-const popup = document.getElementById('popupContainer');
 
-export function popUpClose() {
-    popup.style.display = 'none';
+export function popUpClose(popup) {
+    if(popup){
+        popup.style.display = 'none'; 
+    }
 }
+
