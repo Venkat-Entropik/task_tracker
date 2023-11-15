@@ -18,3 +18,4 @@ describe('createButton function', () => {
     expect(button.classList.contains('removeBtn')).toBe(true);
   });
 });
+
