@@ -1,11 +1,9 @@
 
- const existingTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+//  const existingTasks = JSON.parse(localStorage.getItem('tasks')) || [];
  let filterValue=''
  let debounceTimeout=null
 
-
-  
- export function filterInputFunc(e) {
+ export function filterInputFunc(e,existingTasks) {
    
     filterValue = e.target.value.toLowerCase(); 
   
@@ -24,11 +22,11 @@
         });
       }, 500);
     }else{
-      removeHideClass()
+      removeHideClass(existingTasks)
     }
   }
 
- function removeHideClass(){
+export function removeHideClass(existingTasks){
   existingTasks.forEach((task) => {
       const existingTaskElement = document.querySelector(`[data-id="${task.id}"]`);
       if (existingTaskElement) {

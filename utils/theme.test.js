@@ -32,7 +32,6 @@ describe('loadDarkMode', () => {
     toggleBtn.dispatchEvent(changeEvent);
     expect(body.classList.contains('dark-theme')).toBe(toggleBtn.checked);
     expect(localStorage.getItem('darkMode')).toBe(toggleBtn.checked ? 'true' : 'false');
-  
   });
 
   test('event listener toggle class', () => {

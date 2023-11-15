@@ -4,6 +4,7 @@ import { popUpClose } from "./utils/popUpClose.js";
 import { filterInputFunc } from "./utils/filter.js";
 import { createButton } from "./utils/createButton.js";
 
+
 const toggleBtn = document.querySelector('.toggle-input');
 const body = document.body;
 const popup = document.getElementById('popupContainer');
@@ -47,7 +48,7 @@ function init() {
   cancelBtn.addEventListener('click', ()=>{popUpClose(popup)});
   textArea.addEventListener('keyup', textAreaData);
   dropDown.addEventListener('change', dropDownData);
-  filterInput.addEventListener('keyup',(e)=>{filterInputFunc(e)} );
+  filterInput.addEventListener('keyup',(e)=>{filterInputFunc(e,existingTasks)} );
 
   const dataFromStorage = JSON.parse(localStorage.getItem('tasks')); // getting tasks from local storage
   dataFromStorage.forEach((task) => {
@@ -285,12 +286,11 @@ function dragAndDrop() {
   });
 
   containers.forEach((container) => {
-    
     container.addEventListener('dragover', (e) => {
       e.preventDefault();
       const draggedElement = document.querySelector('.dragging');
       container.appendChild(draggedElement);
-      
     });
   });
 }
+
