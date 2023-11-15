@@ -3,7 +3,7 @@ import { loadDarkMode } from "./utils/theme.js";
 import { popUpClose } from "./utils/popUpClose.js";
 import { filterInputFunc } from "./utils/filter.js";
 import { createButton } from "./utils/createButton.js";
-
+import { clearContainers } from "./utils/clearContainers.js";
 
 const toggleBtn = document.querySelector('.toggle-input');
 const body = document.body;
@@ -77,18 +77,12 @@ function dropDownData(e) {
 
 // Clearing containers
 
-function clearContainers() {
-  all.innerHTML = '';
-  working.innerHTML = '';
-  pending.innerHTML = '';
-  completed.innerHTML = '';
-}
 
 
 
 // Update UI
 function updateUI() {
-  clearContainers();
+  clearContainers(all,working,pending,completed);
 
   existingTasks.forEach((task) => { //looping all the tasks from local storage
    
